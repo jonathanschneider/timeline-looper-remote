@@ -1,8 +1,7 @@
 class Button
 {
 public:
-  Button(int _midi, int _buttonPin, int _ledPin);
-  int midi;
+  Button(int _buttonPin, int _ledPin);
   int buttonPin;
   int ledPin;
   bool buttonState;

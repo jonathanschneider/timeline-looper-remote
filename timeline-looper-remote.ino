@@ -3,19 +3,24 @@
 
 #define channel 1
 #define value 127
-#define levelcc 98
+#define ccStop 85
+#define ccPlay 86
+#define ccRecord 87
+#define ccUndo 89
+#define ccReverse 94
+#define ccHalf 95
+#define ccLevel 98
+#define initLoopLevel 17
 
-Button btnRecord(87, 2, 7);
-Button btnPlay(86, 3, 8);
-Button btnStop(85, 5, 10);
+Button btnRecord(2, 7);
+Button btnPlay(3, 8);
+Button btnStop(5, 10);
+Button btnAlt(4, 9);
+Button btnReverse(2, 7);
+Button btnHalf(3, 8);
+Button btnUndo(5, 10);
 
-Button btnAlt(0, 4, 9);
-
-Button btnReverse(94, 2, 7);
-Button btnHalf(95, 3, 8);
-Button btnUndo(89, 5, 10);
-
-int loopLevel = 17;
+int loopLevel = initLoopLevel;
 unsigned long levelThreshold = 2000;
 unsigned long fadeTime = 20000;
 unsigned long lastLevelTime = 0;
@@ -46,7 +51,7 @@ void loop() {
           loopLevel = 1;
           goto exitLevel;
         }
-        MIDI.sendControlChange(levelcc, loopLevel, channel);
+        MIDI.sendControlChange(ccLevel, loopLevel, channel);
         blinkLED = !blinkLED;
       }
     }
@@ -65,40 +70,40 @@ void loop() {
     if (btnRecord.risingEdge) {
       if (btnRecord.active == LOW) {
         btnRecord.active = HIGH;
-        MIDI.sendControlChange(btnRecord.midi, value, channel);
+        MIDI.sendControlChange(ccRecord, value, channel);
       }
       else if ((btnRecord.active && btnPlay.active) == HIGH) {
         btnRecord.active = LOW;
-        MIDI.sendControlChange(btnRecord.midi, value, channel);
+        MIDI.sendControlChange(ccRecord, value, channel);
       }
       else {
         btnPlay.active = HIGH;
-        MIDI.sendControlChange(btnRecord.midi, value, channel);
+        MIDI.sendControlChange(ccRecord, value, channel);
       }
     }
 
     if (btnPlay.risingEdge) {
       btnPlay.active = HIGH;
       btnRecord.active = LOW;
-      MIDI.sendControlChange(btnPlay.midi, value, channel);
+      MIDI.sendControlChange(ccPlay, value, channel);
     }
 
     if (btnStop.risingEdge) {
       btnPlay.active = LOW;
       btnRecord.active = LOW;
-      loopLevel = 17;
+      loopLevel = initLoopLevel; // Reset loop level
       fadeTime = 20000;
-      MIDI.sendControlChange(btnStop.midi, value, channel);
-      MIDI.sendControlChange(levelcc, loopLevel, channel);
+      MIDI.sendControlChange(ccStop, value, channel);
+      MIDI.sendControlChange(ccLevel, loopLevel, channel);
 
       if (btnReverse.active) {
         btnReverse.active = LOW;
-        MIDI.sendControlChange(btnReverse.midi, value, channel);
+        MIDI.sendControlChange(ccReverse, value, channel);
       }
 
       if (btnHalf.active) {
         btnHalf.active = LOW;
-        MIDI.sendControlChange(btnHalf.midi, value, channel);
+        MIDI.sendControlChange(ccHalf, value, channel);
       }
     }
 
@@ -117,17 +122,17 @@ void loop() {
 
     if (btnReverse.risingEdge) {
       btnReverse.active = !btnReverse.active;
-      MIDI.sendControlChange(btnReverse.midi, value, channel);
+      MIDI.sendControlChange(ccReverse, value, channel);
     }
 
     if (btnUndo.risingEdge) {
       btnRecord.active = LOW;
-      MIDI.sendControlChange(btnUndo.midi, value, channel);
+      MIDI.sendControlChange(ccUndo, value, channel);
     }
 
     if (btnHalf.risingEdge) {
       btnHalf.active = !btnHalf.active;
-      MIDI.sendControlChange(btnHalf.midi, value, channel);
+      MIDI.sendControlChange(ccHalf, value, channel);
     }
 
     btnReverse.updateLed();

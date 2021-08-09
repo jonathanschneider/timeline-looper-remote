@@ -3,9 +3,8 @@
 
 const long debounceDelay = 50;
 
-Button::Button(int _midi, int _buttonPin, int _ledPin)
+Button::Button(int _buttonPin, int _ledPin)
 {
-  midi = _midi;
   buttonPin = _buttonPin;
   ledPin = _ledPin;
   buttonState = false;
