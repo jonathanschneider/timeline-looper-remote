@@ -20,10 +20,10 @@ Button btnReverse(2, 7);
 Button btnHalfSpeed(3, 8);
 Button btnUndo(5, 10);
 
-int loopLevel = initLoopLevel;
-unsigned long levelThreshold = 2000;
-unsigned long fadeTime = 20000;
-unsigned long lastLevelTime = 0;
+unsigned short loopLevel = initLoopLevel;
+unsigned short levelThreshold = 2000;
+unsigned short fadeTime = 20000;
+unsigned short lastLevelTime = 0;
 
 void setup() {
   Serial.begin(31250);

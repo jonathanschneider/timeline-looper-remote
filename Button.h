@@ -2,8 +2,8 @@ class Button
 {
 public:
   Button(int _buttonPin, int _ledPin);
-  int buttonPin;
-  int ledPin;
+  unsigned short buttonPin;
+  unsigned short ledPin;
   bool buttonState;
   bool lastButtonState;
   bool risingEdge;
@@ -11,6 +11,6 @@ public:
   void read();
   void updateLed();
 private:
-  long lastDebounceTime;
+  unsigned long lastDebounceTime;
   void debounce();
 };
