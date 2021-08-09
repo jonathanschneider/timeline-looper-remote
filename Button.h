@@ -4,17 +4,14 @@ public:
   Button(int _midi, int _buttonPin, int _ledPin);
   int midi;
   int buttonPin;
-  int led;
-  bool button;
-  bool buttonLong;
-  bool state;
-  bool slope;
-  bool reading;
+  int ledPin;
+  bool buttonState;
   bool lastButtonState;
+  bool risingEdge;
+  bool active;
+  void read();
+  void updateLed();
+private:
   long lastDebounceTime;
   void debounce();
-
 };
-
-
-

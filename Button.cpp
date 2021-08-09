@@ -1,31 +1,45 @@
 #include "Arduino.h"
 #include "Button.h"
 
-long debounceDelay = 50;
+const long debounceDelay = 50;
 
 Button::Button(int _midi, int _buttonPin, int _ledPin)
 {
   midi = _midi;
   buttonPin = _buttonPin;
-  led = _ledPin;
-  button = false;
-  state = false;
-  slope = false;
+  ledPin = _ledPin;
+  buttonState = false;
+  lastButtonState = false;
+  risingEdge = false;
+  active = false;
   pinMode(buttonPin, INPUT);
-  pinMode(led, OUTPUT);
+  pinMode(ledPin, OUTPUT);
   lastDebounceTime = 0;
 }
 
-void Button::debounce()
+void Button::read()
 {
+  debounce();
+
+  risingEdge = buttonState == HIGH && lastButtonState == LOW;
+  lastButtonState = buttonState;
+}
+
+void Button::debounce() {
   bool reading = digitalRead(buttonPin);
+  bool lastReading;
 
-  if (reading != lastButtonState) {
+  if (reading != lastReading) {
     lastDebounceTime = millis();
-  } 
+  }
 
-  if ((millis() - lastDebounceTime) > debounceDelay)
-    button = reading;
+  if ((millis() - lastDebounceTime) > debounceDelay) {
+    buttonState = reading;
+  }
 
-  lastButtonState = reading;
+  lastReading = reading;
+}
+
+void Button::updateLed() {
+  digitalWrite(ledPin, active);
 }

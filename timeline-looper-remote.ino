@@ -28,17 +28,17 @@ void setup() {
 
 void loop() {
 
-  btnAlt.debounce();
+  btnAlt.read();
 
-  if (flanke(btnAlt)) {
+  if (btnAlt.risingEdge) {
     lastLevelTime = millis();
-    btnAlt.state = !btnAlt.state;
+    btnAlt.active = !btnAlt.active;
     fadeTime = 20000;
   }
 
-  if (btnAlt.button && btnAlt.slope && (loopLevel > 1)) {
+  if (btnAlt.buttonState && btnAlt.lastButtonState && (loopLevel > 1)) {
     if (millis() - lastLevelTime > levelThreshold) {
-      btnAlt.state = LOW;
+      btnAlt.active = LOW;
       fadeTime--;
       if ((fadeTime % 2000) == 0) {
         loopLevel--;
@@ -52,112 +52,88 @@ void loop() {
     }
   }
 
-exitLevel:
+  exitLevel:
 
-  // Main block
+  // Page 1
 
-  if (btnAlt.state == LOW) {
+  if (btnAlt.active == LOW) {
 
-    btnRecord.debounce();
-    btnPlay.debounce();
-    btnStop.debounce();
+    btnRecord.read();
+    btnPlay.read();
+    btnStop.read();
 
-    if (flanke(btnRecord)) {
-      if (btnRecord.state == LOW) {
-        btnRecord.state = HIGH;
+    if (btnRecord.risingEdge) {
+      if (btnRecord.active == LOW) {
+        btnRecord.active = HIGH;
         MIDI.sendControlChange(btnRecord.midi, value, channel);
       }
-      else if ((btnRecord.state && btnPlay.state) == HIGH) {
-        btnRecord.state = LOW;
+      else if ((btnRecord.active && btnPlay.active) == HIGH) {
+        btnRecord.active = LOW;
         MIDI.sendControlChange(btnRecord.midi, value, channel);
       }
       else {
-        btnPlay.state = HIGH;
+        btnPlay.active = HIGH;
         MIDI.sendControlChange(btnRecord.midi, value, channel);
       }
     }
 
-    if (flanke(btnPlay)) {
-      btnPlay.state = HIGH;
-      btnRecord.state = LOW;
+    if (btnPlay.risingEdge) {
+      btnPlay.active = HIGH;
+      btnRecord.active = LOW;
       MIDI.sendControlChange(btnPlay.midi, value, channel);
     }
 
-    if (flanke(btnStop)) {
-      btnPlay.state = LOW;
-      btnRecord.state = LOW;
+    if (btnStop.risingEdge) {
+      btnPlay.active = LOW;
+      btnRecord.active = LOW;
       loopLevel = 17;
       fadeTime = 20000;
       MIDI.sendControlChange(btnStop.midi, value, channel);
       MIDI.sendControlChange(levelcc, loopLevel, channel);
 
-      if (btnReverse.state) {
-        btnReverse.state = LOW;
+      if (btnReverse.active) {
+        btnReverse.active = LOW;
         MIDI.sendControlChange(btnReverse.midi, value, channel);
       }
 
-      if (btnHalf.state) {
-        btnHalf.state = LOW;
+      if (btnHalf.active) {
+        btnHalf.active = LOW;
         MIDI.sendControlChange(btnHalf.midi, value, channel);
       }
     }
 
-    updateLED(btnRecord);
-    updateLED(btnPlay);
-    updateLED(btnStop);
-
-    btnRecord.slope = btnRecord.button;
-    btnPlay.slope = btnPlay.button;
-    btnStop.slope = btnStop.button;
-
+    btnRecord.updateLed();
+    btnPlay.updateLed();
+    btnStop.updateLed();
   }
 
   // Page 2
 
   else {
 
-    btnReverse.debounce();
-    btnUndo.debounce();
-    btnHalf.debounce();
+    btnReverse.read();
+    btnUndo.read();
+    btnHalf.read();
 
-    if (flanke(btnReverse)) {
-      btnReverse.state = !btnReverse.state;
+    if (btnReverse.risingEdge) {
+      btnReverse.active = !btnReverse.active;
       MIDI.sendControlChange(btnReverse.midi, value, channel);
     }
 
-    if (flanke(btnUndo)) {
-      btnRecord.state = LOW;
+    if (btnUndo.risingEdge) {
+      btnRecord.active = LOW;
       MIDI.sendControlChange(btnUndo.midi, value, channel);
     }
 
-    if (flanke(btnHalf)) {
-      btnHalf.state = !btnHalf.state;
+    if (btnHalf.risingEdge) {
+      btnHalf.active = !btnHalf.active;
       MIDI.sendControlChange(btnHalf.midi, value, channel);
     }
 
-    updateLED(btnReverse);
-    updateLED(btnUndo);
-    updateLED(btnHalf);
-
-    btnReverse.slope = btnReverse.button;
-    btnUndo.slope = btnUndo.button;
-    btnHalf.slope = btnHalf.button;
-
+    btnReverse.updateLed();
+    btnUndo.updateLed();
+    btnHalf.updateLed();
   }
 
-  updateLED(btnAlt);
-  btnAlt.slope = btnAlt.button;
-
-}
-
-bool flanke(Button o) {
-  return (o.button == HIGH && o.slope == LOW);
-}
-
-bool negflanke(Button o) {
-  return (o.button == LOW && o.slope == HIGH);
-}
-
-void updateLED(Button o) {
-  digitalWrite(o.led, o.state);
+  btnAlt.updateLed();
 }
