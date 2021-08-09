@@ -5,12 +5,15 @@ public:
   unsigned short buttonPin;
   unsigned short ledPin;
   bool buttonState;
-  bool lastButtonState;
   bool risingEdge;
+  bool longPressActive;
+  bool longPressReleased;
   bool active;
   void read();
   void updateLed();
 private:
-  unsigned long lastDebounceTime;
-  void debounce();
+  bool lastButtonState;
+  unsigned long debounceTimer;
+  unsigned long pressTimer;
+  bool debounce();
 };
