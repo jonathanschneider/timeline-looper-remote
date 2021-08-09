@@ -1,5 +1,7 @@
-#include "MIDI.h"
+#include <MIDI.h>
 #include "Button.h"
+
+MIDI_CREATE_DEFAULT_INSTANCE();
 
 #define channel 1
 #define value 127
