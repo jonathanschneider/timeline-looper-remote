@@ -5,15 +5,15 @@
 #define value 127
 #define levelcc 98
 
-Button record(87, 2, 7);
-Button play(86, 3, 8);
-Button stop(85, 5, 10);
+Button btnRecord(87, 2, 7);
+Button btnPlay(86, 3, 8);
+Button btnStop(85, 5, 10);
 
-Button alt(0, 4, 9);
+Button btnAlt(0, 4, 9);
 
-Button reverse(94, 2, 7);
-Button half(95, 3, 8);
-Button undo(89, 5, 10);
+Button btnReverse(94, 2, 7);
+Button btnHalf(95, 3, 8);
+Button btnUndo(89, 5, 10);
 
 int loopLevel = 17;
 unsigned long levelThreshold = 2000;
@@ -28,29 +28,26 @@ void setup() {
 
 void loop() {
 
-  alt.debounce();
+  btnAlt.debounce();
 
-  if (flanke(alt)) {
+  if (flanke(btnAlt)) {
     lastLevelTime = millis();
-    alt.state = !alt.state;
+    btnAlt.state = !btnAlt.state;
     fadeTime = 20000;
-    //digitalWrite(alt.led, alt.state);
   }
 
-  if (alt.button && alt.slope && (loopLevel > 1)) {
+  if (btnAlt.button && btnAlt.slope && (loopLevel > 1)) {
     if (millis() - lastLevelTime > levelThreshold) {
-      alt.state = LOW;
+      btnAlt.state = LOW;
       fadeTime--;
       if ((fadeTime % 2000) == 0) {
         loopLevel--;
         if (loopLevel < 1) {
-          //digitalWrite(alt.led, LOW);
           loopLevel = 1;
           goto exitLevel;
         }
         MIDI.sendControlChange(levelcc, loopLevel, channel);
         blinkLED = !blinkLED;
-        //digitalWrite(stop.led, blinkLED);
       }
     }
   }
@@ -59,97 +56,97 @@ exitLevel:
 
   // Main block
 
-  if (alt.state == LOW) {
+  if (btnAlt.state == LOW) {
 
-    record.debounce();
-    play.debounce();
-    stop.debounce();
+    btnRecord.debounce();
+    btnPlay.debounce();
+    btnStop.debounce();
 
-    if (flanke(record)) {
-      if (record.state == LOW) {
-        record.state = HIGH;
-        MIDI.sendControlChange(record.midi, value, channel);
+    if (flanke(btnRecord)) {
+      if (btnRecord.state == LOW) {
+        btnRecord.state = HIGH;
+        MIDI.sendControlChange(btnRecord.midi, value, channel);
       }
-      else if ((record.state && play.state) == HIGH) {
-        record.state = LOW;
-        MIDI.sendControlChange(record.midi, value, channel);
+      else if ((btnRecord.state && btnPlay.state) == HIGH) {
+        btnRecord.state = LOW;
+        MIDI.sendControlChange(btnRecord.midi, value, channel);
       }
       else {
-        play.state = HIGH;
-        MIDI.sendControlChange(record.midi, value, channel);
+        btnPlay.state = HIGH;
+        MIDI.sendControlChange(btnRecord.midi, value, channel);
       }
     }
 
-    if (flanke(play)) {
-      play.state = HIGH;
-      record.state = LOW;
-      MIDI.sendControlChange(play.midi, value, channel);
+    if (flanke(btnPlay)) {
+      btnPlay.state = HIGH;
+      btnRecord.state = LOW;
+      MIDI.sendControlChange(btnPlay.midi, value, channel);
     }
 
-    if (flanke(stop)) {
-      play.state = LOW;
-      record.state = LOW;
+    if (flanke(btnStop)) {
+      btnPlay.state = LOW;
+      btnRecord.state = LOW;
       loopLevel = 17;
       fadeTime = 20000;
-      MIDI.sendControlChange(stop.midi, value, channel);
+      MIDI.sendControlChange(btnStop.midi, value, channel);
       MIDI.sendControlChange(levelcc, loopLevel, channel);
 
-      if (reverse.state) {
-        reverse.state = LOW;
-        MIDI.sendControlChange(reverse.midi, value, channel);
+      if (btnReverse.state) {
+        btnReverse.state = LOW;
+        MIDI.sendControlChange(btnReverse.midi, value, channel);
       }
 
-      if (half.state) {
-        half.state = LOW;
-        MIDI.sendControlChange(half.midi, value, channel);
+      if (btnHalf.state) {
+        btnHalf.state = LOW;
+        MIDI.sendControlChange(btnHalf.midi, value, channel);
       }
     }
 
-    updateLED(record);
-    updateLED(play);
-    updateLED(stop);
+    updateLED(btnRecord);
+    updateLED(btnPlay);
+    updateLED(btnStop);
 
-    record.slope = record.button;
-    play.slope = play.button;
-    stop.slope = stop.button;
+    btnRecord.slope = btnRecord.button;
+    btnPlay.slope = btnPlay.button;
+    btnStop.slope = btnStop.button;
 
   }
 
-  // Alternative block
+  // Page 2
 
   else {
 
-    reverse.debounce();
-    undo.debounce();
-    half.debounce();
+    btnReverse.debounce();
+    btnUndo.debounce();
+    btnHalf.debounce();
 
-    if (flanke(reverse)) {
-      reverse.state = !reverse.state;
-      MIDI.sendControlChange(reverse.midi, value, channel);
+    if (flanke(btnReverse)) {
+      btnReverse.state = !btnReverse.state;
+      MIDI.sendControlChange(btnReverse.midi, value, channel);
     }
 
-    if (flanke(undo)) {
-      record.state = LOW;
-      MIDI.sendControlChange(undo.midi, value, channel);
+    if (flanke(btnUndo)) {
+      btnRecord.state = LOW;
+      MIDI.sendControlChange(btnUndo.midi, value, channel);
     }
 
-    if (flanke(half)) {
-      half.state = !half.state;
-      MIDI.sendControlChange(half.midi, value, channel);
+    if (flanke(btnHalf)) {
+      btnHalf.state = !btnHalf.state;
+      MIDI.sendControlChange(btnHalf.midi, value, channel);
     }
 
-    updateLED(reverse);
-    updateLED(undo);
-    updateLED(half);
+    updateLED(btnReverse);
+    updateLED(btnUndo);
+    updateLED(btnHalf);
 
-    reverse.slope = reverse.button;
-    undo.slope = undo.button;
-    half.slope = half.button;
+    btnReverse.slope = btnReverse.button;
+    btnUndo.slope = btnUndo.button;
+    btnHalf.slope = btnHalf.button;
 
   }
 
-  updateLED(alt);
-  alt.slope = alt.button;
+  updateLED(btnAlt);
+  btnAlt.slope = btnAlt.button;
 
 }
 
