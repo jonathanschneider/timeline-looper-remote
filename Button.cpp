@@ -30,13 +30,16 @@ void Button::read()
     }
 
     // Long press
-    if ((millis() - pressTimer > LONG_PRESS) && (longPressActive == false)) {
-  		longPressActive = true;
-  	}
+    if ((millis() - pressTimer) > LONG_PRESS && longPressActive == false) {
+      longPressActive = true;
+    }
   }
   else if (longPressActive == true) {
     longPressReleased = true;
     longPressActive = false;
+  }
+  else {
+    longPressReleased = false;
   }
 
   risingEdge = buttonState == true && lastButtonState == false;
