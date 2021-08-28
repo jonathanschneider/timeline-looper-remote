@@ -12,7 +12,7 @@ My pedal has four stomp switches to control these functions of the looper:
 * Reverse (second page)
 * Half speed (second page)
 * Undo (second page)
-* Decrease playback volume (second page)
+* Decrease playback volume
 
 ![alt text](img/functions.png "Functions")
 
