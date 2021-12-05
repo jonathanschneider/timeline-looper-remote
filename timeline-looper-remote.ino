@@ -12,14 +12,14 @@ MIDI_CREATE_DEFAULT_INSTANCE();
 #define ccReverse 94
 #define ccHalfSpeed 95
 #define ccLevel 98
-#define initLoopLevel 17
+#define initLoopLevel 127
 #define inputDelay 35
 #define ledPage 9
 #define ledRecord 7
 #define ledPlay 8
 
 const unsigned short LONG_PRESS = 1000;
-const unsigned short LEVEL_DELAY = 2000;
+const unsigned short LEVEL_DELAY = 80; // 10s to reduce looper level from 100% to 0% (10000 / 127)
 
 EasyButton btnPage(4, inputDelay, false, false);
 EasyButton btnStop(5, inputDelay, false, false);
@@ -77,7 +77,6 @@ void setup() {
 }
 
 void loop() {
-
   // Read buttons
   btnPage.read();
   btnRecord.read();
@@ -91,7 +90,7 @@ void loop() {
   } else if (btnPage.wasReleased()) {
     pageLongPress = false;
   } else if (pageLongPress && loopLevel > 0) {
-    if (millis() - levelTimer > LEVEL_DELAY) {
+    if ((millis() - levelTimer) > LEVEL_DELAY) {
       levelTimer = millis(); // Reset timer
       loopLevel--;
       MIDI.sendControlChange(ccLevel, loopLevel, channel);
@@ -105,7 +104,6 @@ void loop() {
 
   // Page 1
   if (page == 1) {
-
     // Record
     if (btnRecord.wasPressed() || (recordLongPress && btnRecord.wasReleased())) {
       MIDI.sendControlChange(ccRecord, value, channel);
@@ -168,7 +166,6 @@ void loop() {
 
   // Page 2
   else {
-
     // Reverse
     if (btnRecord.wasPressed()) {
       reverseActive = !reverseActive;
