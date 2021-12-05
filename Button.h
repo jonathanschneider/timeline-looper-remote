@@ -1,20 +1,19 @@
 class Button
 {
 public:
-  Button(int _midi, int _buttonPin, int _ledPin);
-  int midi;
-  int buttonPin;
-  int led;
-  bool button;
-  bool buttonLong;
-  bool state;
-  bool slope;
-  bool reading;
+  Button(int _buttonPin, int _ledPin);
+  unsigned short buttonPin;
+  unsigned short ledPin;
+  bool buttonState;
+  bool risingEdge;
+  bool longPressActive;
+  bool longPressReleased;
+  bool active;
+  void read();
+  void updateLed();
+private:
   bool lastButtonState;
-  long lastDebounceTime;
-  void debounce();
-
+  unsigned long debounceTimer;
+  unsigned long pressTimer;
+  bool debounce();
 };
-
-
-

@@ -1,31 +1,67 @@
 #include "Arduino.h"
 #include "Button.h"
 
-long debounceDelay = 50;
+const unsigned short DEBOUNCE_DELAY = 50;
+const unsigned short LONG_PRESS = 1000;
 
-Button::Button(int _midi, int _buttonPin, int _ledPin)
+Button::Button(int _buttonPin, int _ledPin)
 {
-  midi = _midi;
   buttonPin = _buttonPin;
-  led = _ledPin;
-  button = false;
-  state = false;
-  slope = false;
+  ledPin = _ledPin;
+  buttonState = false;
+  lastButtonState = false;
+  risingEdge = false;
+  longPressActive = false;
+  longPressReleased = false;
+  active = false;
   pinMode(buttonPin, INPUT);
-  pinMode(led, OUTPUT);
-  lastDebounceTime = 0;
+  pinMode(ledPin, OUTPUT);
+  debounceTimer = 0;
+  pressTimer = 0;
 }
 
-void Button::debounce()
+void Button::read()
 {
+  buttonState = debounce();
+
+  if (buttonState == true) {
+    if (lastButtonState == false) {
+      pressTimer = millis();
+    }
+
+    // Long press
+    if ((millis() - pressTimer) > LONG_PRESS && longPressActive == false) {
+      longPressActive = true;
+    }
+  }
+  else if (longPressActive == true) {
+    longPressReleased = true;
+    longPressActive = false;
+  }
+  else {
+    longPressReleased = false;
+  }
+
+  risingEdge = buttonState == true && lastButtonState == false;
+
+  lastButtonState = buttonState;
+}
+
+bool Button::debounce() {
   bool reading = digitalRead(buttonPin);
+  bool lastReading;
 
-  if (reading != lastButtonState) {
-    lastDebounceTime = millis();
-  } 
+  if (reading != lastReading) {
+    debounceTimer = millis();
+  }
 
-  if ((millis() - lastDebounceTime) > debounceDelay)
-    button = reading;
+  if ((millis() - debounceTimer) > DEBOUNCE_DELAY) {
+    return reading;
+  }
 
-  lastButtonState = reading;
+  lastReading = reading;
+}
+
+void Button::updateLed() {
+  digitalWrite(ledPin, active);
 }
