@@ -34,7 +34,7 @@ bool pageLongPress = false;
 bool recordLongPress = false;
 unsigned short page = 1;
 unsigned short loopLevel = initLoopLevel;
-unsigned short levelTimer = 0;
+unsigned long levelTimer = 0;
 
 void switchPage() {
   if (page == 1) {
@@ -90,7 +90,7 @@ void loop() {
   } else if (btnPage.wasReleased()) {
     pageLongPress = false;
   } else if (pageLongPress && loopLevel > 0) {
-    if ((millis() - levelTimer) > LEVEL_DELAY) {
+    if (millis() - levelTimer > LEVEL_DELAY) {
       levelTimer = millis(); // Reset timer
       loopLevel--;
       MIDI.sendControlChange(ccLevel, loopLevel, channel);
