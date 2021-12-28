@@ -105,7 +105,7 @@ void loop() {
   // Page 1
   if (page == 1) {
     // Record
-    if (btnRecord.wasPressed() || (recordLongPress && btnRecord.wasReleased())) {
+    if (btnRecord.wasPressed()) {
       MIDI.sendControlChange(ccRecord, value, channel);
 
       if (!recording) {
@@ -118,7 +118,19 @@ void loop() {
       }
 
       digitalWrite(ledRecord, recording);
-      recordLongPress = false;
+    } else if (recording && recordLongPress && btnRecord.wasReleased()) {
+
+      if (!playing) { // Only recording
+        MIDI.sendControlChange(ccPlay, value, channel); // Send play to stop recording and start playing
+        playing = true;
+        digitalWrite(ledPlay, playing);
+      } else { // Recording and playing
+        MIDI.sendControlChange(ccRecord, value, channel); // Send record to stop recording and not retrigger loop
+      }
+
+      recording = false;
+      recordLongPress = false; // Reset long press
+      digitalWrite(ledRecord, recording);
     }
 
     // Play
