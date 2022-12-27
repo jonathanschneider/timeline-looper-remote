@@ -1,3 +1,4 @@
+#include <Arduino.h>
 #include <MIDI.h>
 #include <EasyButton.h>
 
