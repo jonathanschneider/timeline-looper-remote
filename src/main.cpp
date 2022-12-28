@@ -1,31 +1,14 @@
 #include <Arduino.h>
 #include <MIDI.h>
 #include <EasyButton.h>
+#include "config.h"
 
 MIDI_CREATE_DEFAULT_INSTANCE();
 
-#define channel 1
-#define value 127
-#define ccStop 85
-#define ccPlay 86
-#define ccRecord 87
-#define ccUndo 89
-#define ccReverse 94
-#define ccHalfSpeed 95
-#define ccLevel 98
-#define initLoopLevel 127
-#define inputDelay 35
-#define ledPage 9
-#define ledRecord 7
-#define ledPlay 8
-
-const unsigned short LONG_PRESS = 1000;
-const unsigned short LEVEL_DELAY = 80; // 10s to reduce looper level from 100% to 0% (10000 / 127)
-
-EasyButton btnPage(4, inputDelay, false, false);
-EasyButton btnStop(5, inputDelay, false, false);
-EasyButton btnRecord(2, inputDelay, false, false);
-EasyButton btnPlay(3, inputDelay, false, false);
+EasyButton btnRecord(pinBtnRecord, inputDelay, true, true);
+EasyButton btnPlay(pinBtnPlay, inputDelay, true, true);
+EasyButton btnPage(pinBtnPage, inputDelay, true, true);
+EasyButton btnStop(pinBtnStop, inputDelay, true, true);
 
 bool recording = false;
 bool playing = false;
@@ -69,19 +52,19 @@ void setup() {
   pinMode(ledPage, OUTPUT);
   pinMode(ledRecord, OUTPUT);
   pinMode(ledPlay, OUTPUT);
-  btnPage.begin();
-  btnStop.begin();
   btnRecord.begin();
   btnPlay.begin();
-  btnPage.onPressedFor(LONG_PRESS, onPageLongPress);
+  btnPage.begin();
+  btnStop.begin();
   btnRecord.onPressedFor(LONG_PRESS, onRecordLongPress);
+  btnPage.onPressedFor(LONG_PRESS, onPageLongPress);
 }
 
 void loop() {
   // Read buttons
-  btnPage.read();
   btnRecord.read();
   btnPlay.read();
+  btnPage.read();
   btnStop.read();
 
   // Page selection and looper level
