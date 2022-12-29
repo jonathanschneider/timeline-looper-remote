@@ -5,10 +5,10 @@
 
 MIDI_CREATE_DEFAULT_INSTANCE();
 
-EasyButton btnRecord(pinBtnRecord, inputDelay, PULLUP, INVERT);
-EasyButton btnPlay(pinBtnPlay, inputDelay, PULLUP, INVERT);
-EasyButton btnPage(pinBtnPage, inputDelay, PULLUP, INVERT);
-EasyButton btnStop(pinBtnStop, inputDelay, PULLUP, INVERT);
+EasyButton btnRecord(PIN_BTN_RECORD, INPUT_DELAY, PULLUP, INVERT);
+EasyButton btnPlay(PIN_BTN_PLAY, INPUT_DELAY, PULLUP, INVERT);
+EasyButton btnPage(PIN_BTN_PAGE, INPUT_DELAY, PULLUP, INVERT);
+EasyButton btnStop(PIN_BTN_STOP, INPUT_DELAY, PULLUP, INVERT);
 
 bool recording = false;
 bool playing = false;
@@ -17,7 +17,7 @@ bool halfSpeedActive = false;
 bool pageLongPress = false;
 bool recordLongPress = false;
 unsigned short page = 1;
-unsigned short loopLevel = initLoopLevel;
+unsigned short loopLevel = INIT_LOOP_LEVEL;
 unsigned long levelTimer = 0;
 
 void switchPage() {
@@ -25,17 +25,17 @@ void switchPage() {
     page = 2;
 
     // Update LEDs
-    digitalWrite(ledPage, true);
-    digitalWrite(ledRecord, reverseActive);
-    digitalWrite(ledPlay, halfSpeedActive);
+    digitalWrite(LED_PAGE, true);
+    digitalWrite(LED_RECORD, reverseActive);
+    digitalWrite(LED_PLAY, halfSpeedActive);
 
   } else {
     page = 1;
 
     // Update LEDs
-    digitalWrite(ledPage, false);
-    digitalWrite(ledRecord, recording);
-    digitalWrite(ledPlay, playing);
+    digitalWrite(LED_PAGE, false);
+    digitalWrite(LED_RECORD, recording);
+    digitalWrite(LED_PLAY, playing);
   }
 }
 
@@ -49,9 +49,9 @@ void onRecordLongPress() {
 
 void setup() {
   Serial.begin(31250);
-  pinMode(ledPage, OUTPUT);
-  pinMode(ledRecord, OUTPUT);
-  pinMode(ledPlay, OUTPUT);
+  pinMode(LED_PAGE, OUTPUT);
+  pinMode(LED_RECORD, OUTPUT);
+  pinMode(LED_PLAY, OUTPUT);
   btnRecord.begin();
   btnPlay.begin();
   btnPage.begin();
@@ -77,7 +77,7 @@ void loop() {
     if (millis() - levelTimer > LEVEL_DELAY) {
       levelTimer = millis(); // Reset timer
       loopLevel--;
-      MIDI.sendControlChange(ccLevel, loopLevel, channel);
+      MIDI.sendControlChange(CC_LEVEL, loopLevel, MIDI_CHANNEL);
     }
 
     // Switch back to page 1
@@ -90,72 +90,72 @@ void loop() {
   if (page == 1) {
     // Record
     if (btnRecord.wasPressed()) {
-      MIDI.sendControlChange(ccRecord, value, channel);
+      MIDI.sendControlChange(CC_RECORD, MIDI_VALUE, MIDI_CHANNEL);
 
       if (!recording) {
         recording = true;
       } else if (recording && !playing) {
         playing = true;
-        digitalWrite(ledPlay, playing);
+        digitalWrite(LED_PLAY, playing);
       } else {
         recording = false;
       }
 
-      digitalWrite(ledRecord, recording);
+      digitalWrite(LED_RECORD, recording);
     } else if (recording && recordLongPress && btnRecord.wasReleased()) {
 
       if (!playing) { // Only recording
-        MIDI.sendControlChange(ccPlay, value, channel); // Send play to stop recording and start playing
+        MIDI.sendControlChange(CC_PLAY, MIDI_VALUE, MIDI_CHANNEL); // Send play to stop recording and start playing
         playing = true;
-        digitalWrite(ledPlay, playing);
+        digitalWrite(LED_PLAY, playing);
       } else { // Recording and playing
-        MIDI.sendControlChange(ccRecord, value, channel); // Send record to stop recording and not retrigger loop
+        MIDI.sendControlChange(CC_RECORD, MIDI_VALUE, MIDI_CHANNEL); // Send record to stop recording and not retrigger loop
       }
 
       recording = false;
       recordLongPress = false; // Reset long press
-      digitalWrite(ledRecord, recording);
+      digitalWrite(LED_RECORD, recording);
     }
 
     // Play
     if (btnPlay.wasPressed()) {
-      MIDI.sendControlChange(ccPlay, value, channel);
+      MIDI.sendControlChange(CC_PLAY, MIDI_VALUE, MIDI_CHANNEL);
 
       if (!playing) {
         playing = true;
-        digitalWrite(ledPlay, playing);
+        digitalWrite(LED_PLAY, playing);
       }
 
       if (recording) {
         recording = false;
-        digitalWrite(ledRecord, recording);
+        digitalWrite(LED_RECORD, recording);
       }
     }
 
     // Stop
     if (btnStop.wasPressed()) {
-      MIDI.sendControlChange(ccStop, value, channel);
+      MIDI.sendControlChange(CC_STOP, MIDI_VALUE, MIDI_CHANNEL);
       recording = false;
       playing = false;
-      digitalWrite(ledRecord, false);
-      digitalWrite(ledPlay, false);
+      digitalWrite(LED_RECORD, false);
+      digitalWrite(LED_PLAY, false);
 
       // Reset loop level
-      if (loopLevel != initLoopLevel) {
-        loopLevel = initLoopLevel;
-        MIDI.sendControlChange(ccLevel, loopLevel, channel);
+      if (loopLevel != INIT_LOOP_LEVEL) {
+        loopLevel = INIT_LOOP_LEVEL;
+        MIDI.sendControlChange(CC_LEVEL, loopLevel, MIDI_CHANNEL);
       }
 
        // Reset reverse
       if (reverseActive) {
         reverseActive = false;
-        MIDI.sendControlChange(ccReverse, value, channel);
+        MIDI.sendControlChange(CC_REVERSE, MIDI_VALUE, MIDI_CHANNEL);
       }
 
       // Reset half speed
       if (halfSpeedActive) {
         halfSpeedActive = false;
-        MIDI.sendControlChange(ccHalfSpeed, value, channel);
+        MIDI.sendControlChange(CC_HALF_SPEED, MIDI_VALUE, MIDI_CHANNEL);
       }
     }
   }
@@ -165,20 +165,20 @@ void loop() {
     // Reverse
     if (btnRecord.wasPressed()) {
       reverseActive = !reverseActive;
-      MIDI.sendControlChange(ccReverse, value, channel);
-      digitalWrite(ledRecord, reverseActive);
+      MIDI.sendControlChange(CC_REVERSE, MIDI_VALUE, MIDI_CHANNEL);
+      digitalWrite(LED_RECORD, reverseActive);
     }
 
     // Undo
     if (btnStop.wasPressed()) {
-      MIDI.sendControlChange(ccUndo, value, channel);
+      MIDI.sendControlChange(CC_UNDO, MIDI_VALUE, MIDI_CHANNEL);
     }
 
     // Half speed
     if (btnPlay.wasPressed()) {
       halfSpeedActive = !halfSpeedActive;
-      MIDI.sendControlChange(ccHalfSpeed, value, channel);
-      digitalWrite(ledPlay, halfSpeedActive);
+      MIDI.sendControlChange(CC_HALF_SPEED, MIDI_VALUE, MIDI_CHANNEL);
+      digitalWrite(LED_PLAY, halfSpeedActive);
     }
   }
 }

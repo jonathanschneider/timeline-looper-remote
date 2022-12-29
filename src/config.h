@@ -1,36 +1,29 @@
-#define ARDUINO_NANO 0
-#define NODEMCU 1
-
-#ifndef CONFIG
-#define CONFIG ARDUINO_NANO // Arduino Nano is default config
-#endif
-
 // IO configuration
 
-#if CONFIG == ARDUINO_NANO // Default config for Arduino Nano
+#ifndef ALT_CONFIG // Use default config for Arduino Nano
 
-#define pinBtnRecord 2
-#define pinBtnPlay 3
-#define pinBtnPage 4
-#define pinBtnStop 5
+#define PIN_BTN_RECORD 2
+#define PIN_BTN_PLAY 3
+#define PIN_BTN_PAGE 4
+#define PIN_BTN_STOP 5
 
-#define ledRecord 7
-#define ledPlay 8
-#define ledPage 9
+#define LED_RECORD 7
+#define LED_PLAY 8
+#define LED_PAGE 9
 
 #define PULLUP false
 #define INVERT false
 
-#elif CONFIG == NODEMCU // NodeMCU
+#else // Use alternative config
 
-#define pinBtnRecord D2
-#define pinBtnPlay D3
-#define pinBtnPage D4
-#define pinBtnStop D1
+#define PIN_BTN_RECORD D2
+#define PIN_BTN_PLAY D3
+#define PIN_BTN_PAGE D4
+#define PIN_BTN_STOP D1
 
-#define ledRecord D6
-#define ledPlay D7
-#define ledPage D0
+#define LED_RECORD D6
+#define LED_PLAY D7
+#define LED_PAGE D0
 
 #define PULLUP true
 #define INVERT true
@@ -39,20 +32,19 @@
 
 // MIDI configuration
 
-#define channel 1
-#define value 127
-#define ccStop 85
-#define ccPlay 86
-#define ccRecord 87
-#define ccUndo 89
-#define ccReverse 94
-#define ccHalfSpeed 95
-#define ccLevel 98
+#define MIDI_CHANNEL 1
+#define MIDI_VALUE 127
+#define CC_STOP 85
+#define CC_PLAY 86
+#define CC_RECORD 87
+#define CC_UNDO 89
+#define CC_REVERSE 94
+#define CC_HALF_SPEED 95
+#define CC_LEVEL 98
 
 // Misc
 
-#define initLoopLevel 127
-#define inputDelay 35
-
-const unsigned short LONG_PRESS = 1000;
-const unsigned short LEVEL_DELAY = 80; // 10s to reduce looper level from 100% to 0% (10000 / 127)
+#define INIT_LOOP_LEVEL 127
+#define INPUT_DELAY 35
+#define LONG_PRESS 1000
+#define LEVEL_DELAY 80 // 10s to reduce looper level from 100% to 0% (10000 / 127)
