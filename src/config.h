@@ -1,4 +1,13 @@
+#define ARDUINO_NANO 0
+#define NODEMCU 1
+
+#ifndef CONFIG
+#define CONFIG ARDUINO_NANO // Arduino Nano is default config
+#endif
+
 // IO configuration
+
+#if CONFIG == ARDUINO_NANO // Default config for Arduino Nano
 
 #define pinBtnRecord 2
 #define pinBtnPlay 3
@@ -8,6 +17,25 @@
 #define ledRecord 7
 #define ledPlay 8
 #define ledPage 9
+
+#define PULLUP false
+#define INVERT false
+
+#elif CONFIG == NODEMCU // NodeMCU
+
+#define pinBtnRecord D2
+#define pinBtnPlay D3
+#define pinBtnPage D4
+#define pinBtnStop D1
+
+#define ledRecord D6
+#define ledPlay D7
+#define ledPage D0
+
+#define PULLUP true
+#define INVERT true
+
+#endif
 
 // MIDI configuration
 

@@ -5,10 +5,10 @@
 
 MIDI_CREATE_DEFAULT_INSTANCE();
 
-EasyButton btnRecord(pinBtnRecord, inputDelay, true, true);
-EasyButton btnPlay(pinBtnPlay, inputDelay, true, true);
-EasyButton btnPage(pinBtnPage, inputDelay, true, true);
-EasyButton btnStop(pinBtnStop, inputDelay, true, true);
+EasyButton btnRecord(pinBtnRecord, inputDelay, PULLUP, INVERT);
+EasyButton btnPlay(pinBtnPlay, inputDelay, PULLUP, INVERT);
+EasyButton btnPage(pinBtnPage, inputDelay, PULLUP, INVERT);
+EasyButton btnStop(pinBtnStop, inputDelay, PULLUP, INVERT);
 
 bool recording = false;
 bool playing = false;
