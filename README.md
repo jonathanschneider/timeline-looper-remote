@@ -22,4 +22,8 @@ tbd
 
 ## Installation
 
-tbd
+1. Download and install [PlatformIO IDE](https://platformio.org/platformio-ide).
+1. Clone this repository.
+1. Open the cloned repository in PlatformIO IDE.
+1. Connect Arduino nano to computer.
+1. Click 'Upload' in PlatformIO IDE.
