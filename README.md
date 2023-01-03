@@ -14,11 +14,25 @@ My pedal has four stomp switches to control these functions of the looper:
 * Undo (second page)
 * Decrease looper level
 
-![alt text](img/functions.png "Functions")
+![Functions](img/functions.png "Functions")
 
 ## Assembly
 
-tbd
+### Bill of materials
+
+- Arduino nano
+- Housing type BB
+- 4x 1PST momentary footswitch
+- LED red
+- 2x LED yellow
+- 3x LED bezel
+- 5x resistor 220 R 0.25 W
+- DIN jack 5 poles
+- DC power jack
+
+### Wiring diagram
+
+![Wiring diagram](img/wiring-diagram.svg "Wiring diagram")
 
 ## Installation
 
