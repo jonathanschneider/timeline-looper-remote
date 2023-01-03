@@ -32,7 +32,7 @@ My pedal has four stomp switches to control these functions of the looper:
 
 ### Wiring diagram
 
-![Wiring diagram](img/wiring-diagram.svg "Wiring diagram")
+![Wiring diagram](img/wiring-diagram.png "Wiring diagram")
 
 ## Installation
 
