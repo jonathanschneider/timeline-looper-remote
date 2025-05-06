@@ -38,7 +38,7 @@ MIDI_CREATE_DEFAULT_INSTANCE();
 #define LEVEL_DELAY 80 // 10s to reduce looper level from 100% to 0% (10000 / 127)
 
 EasyButton btnRecord(PIN_BTN_RECORD, INPUT_DELAY, PULLUP, INVERT);
-EasyButton btnPlay(PIN_BTN_PLAY, PULLUP, INVERT);
+EasyButton btnPlay(PIN_BTN_PLAY, INPUT_DELAY, PULLUP, INVERT);
 EasyButton btnPage(PIN_BTN_PAGE, INPUT_DELAY, PULLUP, INVERT);
 EasyButton btnStop(PIN_BTN_STOP, INPUT_DELAY, PULLUP, INVERT);
 
